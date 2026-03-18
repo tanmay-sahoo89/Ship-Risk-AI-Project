@@ -1,0 +1,6 @@
+/* Reset — all styling handled by globals.css */
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}

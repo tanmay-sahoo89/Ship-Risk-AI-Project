@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* ── Dark theme (default) ────────────────────────────────────────────────── */
+:root,
+[data-theme="dark"] {
+  --bg-primary: #0F0F0F;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-glass-light: rgba(255, 255, 255, 0.10);
+  --border-color: rgba(255, 255, 255, 0.10);
+  --border-light: rgba(255, 255, 255, 0.20);
+  --text-heading: #f3f4f6;
+  --text-body: #d1d5db;
+  --text-muted: #9ca3af;
+  --accent-color: #C09891;
+  --input-bg: rgba(255, 255, 255, 0.10);
+  --shadow: rgba(0, 0, 0, 0.3);
+  --scrollbar-track: rgba(255, 255, 255, 0.05);
+  --scrollbar-thumb: rgba(192, 152, 145, 0.5);
+}
+
+/* ── Light theme ─────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg-primary: #f5f5f4;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-glass-light: rgba(0, 0, 0, 0.04);
+  --border-color: rgba(0, 0, 0, 0.10);
+  --border-light: rgba(0, 0, 0, 0.12);
+  --text-heading: #1a1a2e;
+  --text-body: #374151;
+  --text-muted: #6b7280;
+  --accent-color: #8B5E3C;
+  --input-bg: rgba(0, 0, 0, 0.05);
+  --shadow: rgba(0, 0, 0, 0.08);
+  --scrollbar-track: rgba(0, 0, 0, 0.05);
+  --scrollbar-thumb: rgba(139, 94, 60, 0.35);
+}
+
+@layer base {
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-body);
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+}
+
+/* Component styles — lower priority so Tailwind utilities (pl-10, etc.) can override */
+@layer components {
+  .btn-primary {
+    @apply bg-[#2A0800] hover:bg-[#1a0500] font-semibold py-2 px-4 rounded-lg transition-all duration-200 hover:scale-105;
+    color: #ffffff !important;
+  }
+
+  .btn-secondary {
+    @apply bg-[#775144] hover:bg-[#5a3d33] font-semibold py-2 px-4 rounded-lg transition-all duration-200;
+    color: #ffffff !important;
+  }
+
+  .card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px var(--shadow);
+    transition: all 0.3s ease;
+  }
+  .card:hover {
+    box-shadow: 0 20px 40px var(--shadow);
+  }
+
+  .input-field {
+    background: var(--input-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-light);
+    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+    width: 100%;
+    color: var(--text-heading);
+    transition: all 0.2s ease;
+  }
+  .input-field:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent-color);
+  }
+
+  /* Native <option> elements need solid colors (rgba/transparent won't work) */
+  .input-field option {
+    background-color: #1f1f1f;
+    color: #f3f4f6;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+
+  .glass-light {
+    background: var(--bg-glass-light);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-light);
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+
+  .gradient-primary {
+    background: linear-gradient(135deg, #2a0800 0%, #775144 100%);
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, #c09891 0%, #bea8a7 100%);
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px var(--shadow);
+  }
+
+  /* Theme-aware semantic text classes */
+  .text-white {
+    color: var(--text-heading) !important;
+  }
+
+  .text-light {
+    color: var(--text-muted) !important;
+  }
+
+  .text-accent {
+    color: var(--accent-color) !important;
+  }
+}
+
+/* Risk tier badge colors — stable across themes */
+.bg-risk-critical { background-color: #dc2626; }
+.bg-risk-high { background-color: #ea580c; }
+.bg-risk-medium { background-color: #ca8a04; }
+.bg-risk-low { background-color: #16a34a; }
+
+/* ── Light theme card overrides ──────────────────────────────────────────── */
+[data-theme="light"] .card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+[data-theme="light"] .card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+[data-theme="light"] .input-field option {
+  background-color: #ffffff;
+  color: #1a1a2e;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+.animate-slideIn { animation: slideIn 0.3s ease-out; }
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(139, 94, 60, 0.6); }

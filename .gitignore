@@ -1,0 +1,174 @@
+# SECURITY: Credentials & Secrets (CRITICAL - NEVER COMMIT)
+serviceAccountKey.json
+firebase-key.json
+*.key
+*.pem
+*.crt
+*.cer
+
+# Environment Variables - NEVER COMMIT (contains API keys, credentials, secrets)
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.production.local
+.env.test.local
+.env.development
+.env.production
+.env.test
+
+# Local Documentation (reference only, not for repo)
+PROJECT_DOCUMENTATION.md
+*.md.local
+
+# Directories for secrets
+secrets/
+credentials/
+config/secrets/
+
+# Python - Virtual Environments
+venv/
+ENV/
+env/
+.venv
+python-env/
+pyvenv.cfg
+
+# Python - Build & Distribution
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Python - Runtime & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.pyc
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+site-packages/
+
+# Python - Testing & Coverage
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+htmlcov/
+.hypothesis/
+
+# Node.js / Frontend - Dependencies & Build
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+lerna-debug.log*
+
+# Node.js / Frontend - Build & Distribution
+dist/
+build/
+out/
+.nuxt/
+.cache/
+.next/
+.vuepress/dist/
+.temp/
+.parcel-cache
+
+# Development & Build Tools
+.vite/
+.turbo/
+.eslintcache
+.stylelintcache
+*.bundle
+
+# IDE & Editor Configuration
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+*~
+.sublime-project
+.sublime-workspace
+.project
+.pydevproject
+.settings/
+.classpath
+.c9/
+*.jinja2
+*.sublime-snippet
+
+# Database & Data Files
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+/data/shipments_raw.csv
+/data/live_shipments.csv
+/data/*.csv
+*.sql
+
+# ML Artifacts, Models & Generated Output
+/artifacts/*.pkl
+/artifacts/*.joblib
+/artifacts/models/
+/outputs/
+*.pkl
+*.joblib
+*.h5
+*.pb
+.pkl
+.joblib
+model_*.pt
+*.onnx
+*.pth
+
+# Operating System
+.DS_Store
+Thumbs.db
+Desktop.ini
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Logs
+logs/
+*.log
+firebase-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+*.out
+debug.log
