@@ -18,7 +18,6 @@ firebase-key.json
 .env.test
 
 # Local Documentation (reference only, not for repo)
-PROJECT_DOCUMENTATION.md
 *.md.local
 
 # Directories for secrets
