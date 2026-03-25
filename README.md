@@ -152,3 +152,4 @@ ship-risk-ai/
 - Vite
 - Tailwind CSS
 - Firebase SDK
+"# Ship-Risk-AI-Project" 
