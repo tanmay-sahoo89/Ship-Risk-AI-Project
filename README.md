@@ -1,6 +1,5 @@
 # Ship Risk AI — Complete Project Documentation
 
-> **Generated:** 2026-03-25
 > **Project:** AI-Driven Shipment Risk Prediction & Dashboard
 > **Deployed at:** [https://ship-risk-ai.web.app](https://ship-risk-ai.web.app)
 
