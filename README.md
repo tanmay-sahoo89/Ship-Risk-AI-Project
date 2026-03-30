@@ -845,15 +845,15 @@ These insights guide intervention strategies and risk factor communication in th
 | `fit_transform(df)`     | `df: pd.DataFrame`              | `tuple` (7 items) | Full pipeline: clean→engineer→encode→scale→split                               | `main_pipeline.py: run_training()`                          | Saves .pkl and .csv artifacts |
 | `transform(df)`         | `df: pd.DataFrame`              | `pd.DataFrame`    | Applies saved pipeline without fitting                                         | `main_pipeline.py: run_prediction()`, `run_scenario_demo()` | Loads .pkl artifacts          |
 
-### 4.3 Python — model_training.py
+### 4.3 Python — model_training.py (Ensemble Model Training)
 
-| Function                                       | Parameters                   | Returns             | Description                                                    | Called From                        | Side Effects                               |
-| ---------------------------------------------- | ---------------------------- | ------------------- | -------------------------------------------------------------- | ---------------------------------- | ------------------------------------------ |
-| `build_models()`                               | None                         | `dict`              | Returns 4 configured sklearn classifiers                       | `train_all()`                      | None                                       |
-| `train_all(X_train, y_train, X_val, y_val)`    | Training and validation data | `dict`              | Trains all 4 models, computes metrics                          | `main_pipeline.py: run_training()` | Prints training progress                   |
-| `select_and_evaluate(results, X_test, y_test)` | `results: dict`, test data   | `tuple(str, model)` | Selects best by ROC-AUC, prints report and feature importances | `main_pipeline.py: run_training()` | Saves feature_importances.csv              |
-| `save_model(model, name)`                      | `model`, `name: str`         | None                | Saves model as .pkl                                            | `main_pipeline.py: run_training()` | Writes best_model.pkl, best_model_name.txt |
-| `print_comparison(results)`                    | `results: dict`              | None                | Prints and saves model comparison table                        | `main_pipeline.py: run_training()` | Writes model_comparison.csv                |
+| Function                                       | Parameters                   | Returns             | Description                                                           | Called From                        | Side Effects                               |
+| ---------------------------------------------- | ---------------------------- | ------------------- | --------------------------------------------------------------------- | ---------------------------------- | ------------------------------------------ |
+| `build_models()`                               | None                         | `dict`              | Returns dict of 4 ensemble classifiers (LR, RF, GB, ET)               | `train_all()`                      | None                                       |
+| `train_all(X_train, y_train, X_val, y_val)`    | Training and validation data | `dict`              | Trains all 4 ensemble models on same dataset, computes metrics        | `main_pipeline.py: run_training()` | Prints training progress for each model    |
+| `select_and_evaluate(results, X_test, y_test)` | `results: dict`, test data   | `tuple(str, model)` | Selects best model (Gradient Boosting) by ROC-AUC (0.9939), evaluates | `main_pipeline.py: run_training()` | Saves feature_importances.csv              |
+| `save_model(model, name)`                      | `model`, `name: str`         | None                | Saves selected Gradient Boosting model as .pkl                        | `main_pipeline.py: run_training()` | Writes best_model.pkl, best_model_name.txt |
+| `print_comparison(results)`                    | `results: dict`              | None                | Prints and saves ensemble model comparison table with 4 metrics each  | `main_pipeline.py: run_training()` | Writes model_comparison.csv                |
 
 ### 4.4 Python — risk_scoring.py (RiskScoringEngine)
 
