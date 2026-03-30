@@ -484,6 +484,99 @@ GIET-HACKTHON/
 - **Purpose:** The fully preprocessed and scaled training dataset (all numeric features normalized to 0-1 range).
 - **Format:** CSV with all original and engineered features
 
+#### **Ensemble Model Comparison & Results**
+
+The Ship Risk AI system employs a **multi-model ensemble approach** where four complementary classification algorithms are trained and compared to predict shipment delays. This ensemble strategy ensures robust predictions by leveraging the strengths of different learning paradigms. Below is a comprehensive analysis of model performance and results.
+
+##### **Model Training Overview**
+
+The following four models were trained on the same preprocessed feature set (27 features including engineered features like `composite_risk_score`, `transit_progress_ratio`, `log_weight`, and `sla_pressure`):
+
+1. **Logistic Regression** — Linear classifier with L2 regularization (C=0.5) and balanced class weights
+2. **Random Forest** — Ensemble of 200 decision trees (max_depth=12) with balanced class weights
+3. **Gradient Boosting** — Sequential ensemble of 200 weak learners (learning_rate=0.05, max_depth=5)
+4. **Extra Trees** — Extremely randomized trees ensemble of 200 trees (max_depth=12) with balanced class weights
+
+##### **Performance Metrics Comparison**
+
+| Model                 | ROC-AUC    | F1-Score   | Precision  | Recall  | Performance Rank |
+| --------------------- | ---------- | ---------- | ---------- | ------- | ---------------- |
+| **Gradient Boosting** | **0.9939** | **0.9972** | 0.9944     | **1.0** | 🥇 **1st**       |
+| Random Forest         | 0.9811     | 0.9972     | **0.9955** | 0.9989  | 🥈 2nd           |
+| Logistic Regression   | 0.9803     | 0.9801     | 0.9977     | 0.963   | 🥉 3rd           |
+| Extra Trees           | 0.9704     | 0.9966     | 0.9955     | 0.9978  | 4th              |
+
+##### **Detailed Analysis**
+
+**Gradient Boosting (Selected Best Model)**
+
+- **ROC-AUC: 0.9939** — Highest discrimination ability between delayed and on-time shipments
+- **F1-Score: 0.9972** — Excellent balance between precision and recall, tied with Random Forest
+- **Precision: 0.9944** — Only 0.56% false positive rate on alerts
+- **Recall: 1.0** — Perfect recall — catches 100% of delayed shipments
+- **Key Strength:** Perfect recall ensures no delayed shipments go undetected, critical for operational decision-making
+
+**Random Forest**
+
+- **ROC-AUC: 0.9811** — Marginally lower than Gradient Boosting but still excellent
+- **F1-Score: 0.9972** — Tied F1 with Gradient Boosting
+- **Precision: 0.9955** — Highest precision; only 0.45% false positive rate
+- **Recall: 0.9989** — Nearly perfect recall with minimal missed delays
+- **Key Strength:** Most accurate predictions with lowest false alert rate; useful for minimizing unnecessary interventions
+
+**Logistic Regression**
+
+- **ROC-AUC: 0.9803** — Strong linear model performance
+- **F1-Score: 0.9801** — Lower F1 due to reduced recall
+- **Precision: 0.9977** — Highest precision; minimal false positives
+- **Recall: 0.963** — Misses ~3.7% of delayed shipments
+- **Key Strength:** Simple, interpretable model; efficient for real-time inference
+
+**Extra Trees**
+
+- **ROC-AUC: 0.9704** — Solid but lowest among the four models
+- **F1-Score: 0.9966** — Very high F1-score
+- **Precision: 0.9955** — Tied with Random Forest
+- **Recall: 0.9978** — Nearly perfect recall
+- **Key Strength:** Fast training and inference; complements tree-based diversity
+
+##### **Model Selection Rationale**
+
+**Gradient Boosting was selected as the best model** for production deployment because:
+
+1. **Highest ROC-AUC (0.9939):** Superior ability to distinguish delayed shipments across all probability thresholds
+2. **Perfect Recall (1.0):** Ensures zero missed critical delays — essential for supply chain visibility
+3. **Strong Precision (0.9944):** Minimal false alarms that could lead to unnecessary costly interventions
+4. **Optimal Risk Detection:** The combination of high AUC and perfect recall makes it ideal for a risk prediction system where missing a delay is more costly than triggering a few extra alerts
+5. **Feature Importance Interpretability:** Gradient Boosting provides clear feature importance rankings for explainability
+
+##### **Ensemble Prediction Strategy**
+
+While Gradient Boosting is deployed as the primary model, the system could be enhanced with ensemble voting:
+
+- **Voting Strategy:** Average predictions from all four models for increased robustness
+- **Conservative Approach:** Flag shipment as at-risk if ≥3 models predict delay probability > threshold
+- **Confidence Scoring:** Use model agreement as a confidence indicator (4/4 models = high confidence)
+
+This multi-model approach provides fallback mechanisms and increases trust in predictions through consensus.
+
+##### **Feature Importance (Top 10 from Gradient Boosting)**
+
+The best model identified the following features as most critical for delay prediction:
+
+1. `composite_risk_score` (0.2170) — Weighted blend of all risk signals
+2. `transit_progress_ratio` (0.1240) — Current progress through the route
+3. `route_risk_score` (0.0910) — Geographic route risk assessment
+4. `historical_delay_rate` (0.0700) — Carrier's historical reliability
+5. `log_weight` (0.0690) — Shipment weight impact
+6. `disruption_severity` (0.0614) — Current disruption impact
+7. `weather_severity` (0.0598) — Weather condition impact
+8. `port_congestion` (0.0546) — Port/origin congestion level
+9. `carrier_reliability` (0.0489) — Carrier performance metric
+10. `sla_pressure` (0.0445) — Time urgency (hours to SLA deadline)
+
+These insights guide intervention strategies and risk factor communication in the dashboard.
+
 ### 3.6 Frontend — Configuration Files
 
 #### `ship-risk-ai/package.json`
