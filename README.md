@@ -10,6 +10,7 @@
 1. [Project Overview](#1-project-overview)
 2. [Directory Structure](#2-directory-structure)
 3. [File-by-File Detailed Explanation](#3-file-by-file-detailed-explanation)
+   - [3.5.1 Ensemble Model Comparison & Results](#ensemble-model-comparison--results)
 4. [Complete Function & Method Reference](#4-complete-function--method-reference)
 5. [API Reference](#5-api-reference)
 6. [Project Workflow (End-to-End)](#6-project-workflow-end-to-end)
@@ -26,12 +27,12 @@
 
 ### What This Project Does
 
-Ship Risk AI is a comprehensive, end-to-end AI-driven system for **shipment delay risk prediction, alert generation, and intervention recommendations**. It combines an ML pipeline (Python/scikit-learn) with a modern React dashboard to enable logistics managers to:
+Ship Risk AI is a comprehensive, end-to-end AI-driven system for **shipment delay risk prediction, alert generation, and intervention recommendations**. It combines an advanced ensemble ML pipeline (Python/scikit-learn with 4 optimized classification models) with a modern React dashboard to enable logistics managers to:
 
-- **Predict** which shipments are likely to be delayed using trained classification models
-- **Score** live shipments in real time and assign risk tiers (LOW / MEDIUM / HIGH / CRITICAL)
-- **Generate alerts** for shipments that exceed risk thresholds
-- **Recommend interventions** (reroute, carrier switch, air freight upgrade, priority handling, etc.)
+- **Predict** which shipments are likely to be delayed using an ensemble of trained classification models (Gradient Boosting, Random Forest, Logistic Regression, Extra Trees)
+- **Score** live shipments in real time using the best model (Gradient Boosting: 99.39% ROC-AUC) and assign risk tiers (LOW / MEDIUM / HIGH / CRITICAL)
+- **Generate alerts** for shipments that exceed risk thresholds with high precision and perfect recall
+- **Recommend interventions** (reroute, carrier switch, air freight upgrade, priority handling, etc.) based on delay probability and risk factors
 - **Visualize** risk metrics, alert trends, delay distributions, and live tracking on an interactive map
 - **Export** reports as CSV or PDF
 - **Get AI-powered insights** via Google Gemini integration for natural-language shipment queries
@@ -329,16 +330,21 @@ GIET-HACKTHON/
 
 #### `model_training.py`
 
-- **Purpose:** Trains 4 classification models, evaluates them, selects the best, and saves it.
+- **Purpose:** Trains an ensemble of 4 classification models, evaluates them on validation and test sets, compares their performance, selects the best model (Gradient Boosting), and saves it along with feature importances.
 - **Language:** Python
 - **Imports:** pandas, numpy, joblib, sklearn (LogisticRegression, RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier, classification_report, roc_auc_score, f1_score, precision_score, recall_score, confusion_matrix)
+- **Ensemble Models Trained:**
+  1. **Logistic Regression** — Linear classifier with C=0.5, balanced class weights (ROC-AUC: 0.9803)
+  2. **Random Forest** — 200 trees, max_depth=12, balanced weights (ROC-AUC: 0.9811)
+  3. **Gradient Boosting** — 200 estimators, learning_rate=0.05, max_depth=5 ⭐ **SELECTED** (ROC-AUC: 0.9939)
+  4. **Extra Trees** — 200 trees, max_depth=12, balanced weights (ROC-AUC: 0.9704)
 - **Functions:**
   - `build_models()` — Returns dict of 4 configured classifiers
-  - `train_all(X_train, y_train, X_val, y_val)` — Trains all models, computes ROC-AUC, F1, Precision, Recall
-  - `select_and_evaluate(results, X_test, y_test)` — Selects best by ROC-AUC, prints classification report, confusion matrix, and top-10 feature importances
+  - `train_all(X_train, y_train, X_val, y_val)` — Trains all models, computes ROC-AUC, F1, Precision, Recall on validation set
+  - `select_and_evaluate(results, X_test, y_test)` — Selects best by ROC-AUC, evaluates on test set, prints classification report, confusion matrix, and top-10 feature importances
   - `save_model(model, name)` — Saves best model as `best_model.pkl` and name as `best_model_name.txt`
   - `print_comparison(results)` — Prints comparison table and saves `model_comparison.csv`
-- **Best model:** Gradient Boosting (ROC-AUC: 0.9939, F1: 0.9972)
+- **Selection Criteria:** Gradient Boosting selected for highest ROC-AUC (0.9939), perfect recall (1.0), and strong precision (0.9944) — see [Ensemble Model Comparison & Results](#ensemble-model-comparison--results) for detailed analysis
 
 #### `risk_scoring.py`
 
@@ -1058,10 +1064,11 @@ main_pipeline.py --mode full
 │       ├── encode() → label-encode 7 categoricals → artifacts/label_encoders.pkl
 │       ├── scale() → MinMaxScale numerics → artifacts/scaler.pkl, feature_cols.pkl
 │       └── split() → 70/15/15 stratified split
-├── PHASE 3: Model Training
-│   ├── train_all() → trains Logistic Regression, Random Forest, Gradient Boosting, Extra Trees
-│   ├── print_comparison() → artifacts/model_comparison.csv
-│   └── select_and_evaluate() → artifacts/best_model.pkl, best_model_name.txt, feature_importances.csv
+├── PHASE 3: Ensemble Model Training & Selection
+│   ├── train_all() → trains 4 ensemble models (Logistic Regression, Random Forest, Gradient Boosting, Extra Trees)
+│   ├── print_comparison() → artifacts/model_comparison.csv (all models compared by ROC-AUC, F1, Precision, Recall)
+│   ├── select_and_evaluate() → selects Gradient Boosting as best (0.9939 ROC-AUC, 1.0 recall)
+│   └── save_model() → artifacts/best_model.pkl, best_model_name.txt, feature_importances.csv
 ├── PHASE 4: Live Shipment Scoring
 │   ├── generate_shipment_data(500) → data/live_shipments.csv
 │   ├── ShipmentFeatureEngineer.transform() → preprocessed features
