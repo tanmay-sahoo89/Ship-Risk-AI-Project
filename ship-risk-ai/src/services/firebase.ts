@@ -1,10 +1,14 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import type { Auth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import type { Firestore } from 'firebase/firestore';
-import { getAnalytics } from 'firebase/analytics';
-import type { Analytics } from 'firebase/analytics';
+import { initializeApp } from "firebase/app";
+import {
+  getAuth,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
+import type { Auth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import type { Firestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
+import type { Analytics } from "firebase/analytics";
 
 // Firebase configuration
 // To use Firebase:
@@ -38,15 +42,25 @@ try {
   if (firebaseConfig.apiKey) {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
+    
+    // Set persistence to LOCAL so users stay logged in
+    if (auth) {
+      setPersistence(auth, browserLocalPersistence).catch(err => 
+        console.warn('Failed to set auth persistence:', err)
+      );
+    }
+    
     db = getFirestore(app);
 
     // Analytics only works in production
-    if (typeof window !== 'undefined' && import.meta.env.PROD) {
+    if (typeof window !== "undefined" && import.meta.env.PROD) {
       analytics = getAnalytics(app);
     }
   }
 } catch (error) {
-  console.warn('Firebase not configured. Please add your Firebase config to .env.local');
+  console.warn(
+    "Firebase not configured. Please add your Firebase config to .env.local",
+  );
 }
 
 export { auth, db, analytics };

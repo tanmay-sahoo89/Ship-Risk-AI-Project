@@ -45,6 +45,9 @@ const LiveTracking = lazy(() =>
 const NotFound = lazy(() =>
   import("./pages/NotFound").then((m) => ({ default: m.NotFound })),
 );
+const ResetPassword = lazy(() =>
+  import("./pages/ResetPassword").then((m) => ({ default: m.ResetPassword })),
+);
 
 // Loading fallback component
 const LoadingFallback = () => (
@@ -70,6 +73,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
+                    <Route path="/auth/action" element={<ResetPassword />} />
 
                     <Route
                       element={
@@ -90,14 +94,8 @@ function App() {
                         element={<Recommendations />}
                       />
                       <Route path="/analytics" element={<Analytics />} />
-                      <Route
-                        path="/live-tracking"
-                        element={<LiveTracking />}
-                      />
-                      <Route
-                        path="/add-shipment"
-                        element={<AddShipment />}
-                      />
+                      <Route path="/live-tracking" element={<LiveTracking />} />
+                      <Route path="/add-shipment" element={<AddShipment />} />
                     </Route>
 
                     <Route path="/404" element={<NotFound />} />
