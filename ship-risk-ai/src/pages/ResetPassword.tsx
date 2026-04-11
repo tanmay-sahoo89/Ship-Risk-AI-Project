@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Lock,
-  Mail,
   CheckCircle,
   AlertCircle,
   Eye,
@@ -11,7 +10,6 @@ import {
 import {
   confirmPasswordReset,
   verifyPasswordResetCode,
-  ActionCodeError,
 } from "firebase/auth";
 import { auth } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
@@ -46,18 +44,15 @@ export const ResetPassword: React.FC = () => {
         setEmail(email);
         setVerifying(false);
       } catch (err) {
-        if (err instanceof ActionCodeError) {
-          if (err.code === "auth/expired-action-code") {
-            setError(
-              "This password reset link has expired. Please request a new one.",
-            );
-          } else if (err.code === "auth/invalid-action-code") {
-            setError("Invalid password reset link. Please request a new one.");
-          } else {
-            setError("Unable to verify reset link. Please try again.");
-          }
+        const firebaseErr = err as any;
+        if (firebaseErr?.code === "auth/expired-action-code") {
+          setError(
+            "This password reset link has expired. Please request a new one.",
+          );
+        } else if (firebaseErr?.code === "auth/invalid-action-code") {
+          setError("Invalid password reset link. Please request a new one.");
         } else {
-          setError("An error occurred. Please try again.");
+          setError("Unable to verify reset link. Please try again.");
         }
         setVerifying(false);
       }
@@ -95,20 +90,17 @@ export const ResetPassword: React.FC = () => {
       setSuccess(true);
       setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
-      if (err instanceof ActionCodeError) {
-        if (err.code === "auth/expired-action-code") {
-          setError(
-            "This link has expired. Please request a new password reset.",
-          );
-        } else if (err.code === "auth/invalid-action-code") {
-          setError("Invalid link. Please request a new password reset.");
-        } else if (err.code === "auth/weak-password") {
-          setError("Password is too weak. Please use a stronger password.");
-        } else {
-          setError("Failed to reset password. Please try again.");
-        }
+      const firebaseErr = err as any;
+      if (firebaseErr?.code === "auth/expired-action-code") {
+        setError(
+          "This link has expired. Please request a new password reset.",
+        );
+      } else if (firebaseErr?.code === "auth/invalid-action-code") {
+        setError("Invalid link. Please request a new password reset.");
+      } else if (firebaseErr?.code === "auth/weak-password") {
+        setError("Password is too weak. Please use a stronger password.");
       } else {
-        setError("An error occurred. Please try again.");
+        setError("Failed to reset password. Please try again.");
       }
     } finally {
       setLoading(false);

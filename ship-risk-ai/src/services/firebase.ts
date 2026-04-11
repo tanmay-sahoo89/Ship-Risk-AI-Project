@@ -42,14 +42,14 @@ try {
   if (firebaseConfig.apiKey) {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
-    
+
     // Set persistence to LOCAL so users stay logged in
     if (auth) {
-      setPersistence(auth, browserLocalPersistence).catch(err => 
-        console.warn('Failed to set auth persistence:', err)
+      setPersistence(auth, browserLocalPersistence).catch((err) =>
+        console.warn("Failed to set auth persistence:", err),
       );
     }
-    
+
     db = getFirestore(app);
 
     // Analytics only works in production
